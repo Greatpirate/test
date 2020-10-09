@@ -1,0 +1,111 @@
+void setup() {
+  Serial.begin(115200);
+ 
+   char chArray[50] = "some characters";
+   String str(chArray);
+  //           {"ledmode":2,"cr":ff,"cg":00,"cb":234}
+  //               2- 9       13-16    22-25  30-33
+  String m=  "{\"ledmode\":2,\"cr\":ff,\"cg\":a,\"cb\":1}";
+   JsontoString(m,"ledmode");//分割调用
+   
+    JsontoString(m,"cr");//分割调用
+  
+     JsontoString(m,"cg");//分割调用
+    
+      JsontoString(m,"cb");//分割调用
+}
+  
+void loop()
+{ 
+  
+}
+ 
+/*
+函数说明： 从Json格式的String中，截取对应键值
+输入：  String 数据帧 String 键名
+输出：  int 类型的 键值
+示例;
+  String m=  "{\"ledmode\":2,\"cr\":ff,\"cg\":a,\"cb\":1}";
+  int a=JsontoString(m,"ledmode");//分割调用
+结果： a=2;
+*/
+int  JsontoString(String zifuchuan,String fengefu)
+ {
+  fengefu="\""+fengefu+"\"";
+  int weizhi_KEY; //找查的位置
+  int weizhi_DH;
+  String temps;//临时字符串
+ weizhi_KEY = zifuchuan.indexOf(fengefu);//找到位置
+ temps=zifuchuan.substring( weizhi_KEY+fengefu.length(), zifuchuan.length());//打印取第一个字符
+ weizhi_DH = weizhi_KEY+fengefu.length()+ temps.indexOf(',');//找到位置
+ if( temps.indexOf(',')==-1){
+  // weizhi_DH = weizhi_KEY+fengefu.length()+ temps.indexOf('}');//找到位置
+ weizhi_DH = zifuchuan.length()-1;
+  }
+ temps="";
+  temps=zifuchuan.substring( weizhi_KEY+fengefu.length()+1,  weizhi_DH);//打印取第一个字符
+  Serial.print(temps);
+  Serial.print("---");
+ 
+ return StringtoHex(temps);
+  }
+ 
+/*
+说明 String 转 16进制对应的10进制数
+输入：  String
+输出：  int
+示例：
+FF   255
+ff   255
+1    1
+*/
+int StringtoHex(String temps)
+  {
+  int l=0;
+  int p=1;
+  for (int i = temps.length()-1; i >=0; i--) {
+   if(temps[i]=='a'||temps[i]=='b'||temps[i]=='c'||temps[i]=='d'||temps[i]=='e'||temps[i]=='f'){
+     l+=((int)(temps[i]-'a')+10)*p;
+    p*=16;
+   }
+   else if(temps[i]=='A'||temps[i]=='B'||temps[i]=='C'||temps[i]=='D'||temps[i]=='E'||temps[i]=='F'){
+     l+=((int)(temps[i]-'A')+10)*p;
+    p*=16;
+   }
+   else if(temps[i]=='0'||temps[i]=='1'||temps[i]=='2'||temps[i]=='3'||temps[i]=='4'||temps[i]=='5'||temps[i]=='6'||temps[i]=='7'||temps[i]=='8'||temps[i]=='9')
+   {
+      l+=(int)(temps[i]-'0')*p;
+    p*=16;
+     
+    }
+    
+ }
+  Serial.println(l);
+  return  l;
+     
+    }
+/*
+说明 String 转 10进制对应的10进制数
+输入：  String
+输出：  int
+示例：
+1023  1023
+1    1
+*/
+    int StringtoInt(String temps)
+  {
+  int l=0;
+  int p=1;
+  for (int i = temps.length()-1; i >=0; i--) {
+   if(temps[i]=='0'||temps[i]=='1'||temps[i]=='2'||temps[i]=='3'||temps[i]=='4'||temps[i]=='5'||temps[i]=='6'||temps[i]=='7'||temps[i]=='8'||temps[i]=='9')
+   {
+      l+=(int)(temps[i]-'0')*p;
+    p*=10;
+     
+    }
+    
+ }
+  Serial.println(l);
+  return  l;
+     
+    }

@@ -1,0 +1,52 @@
+/**
+ * 功能描述：spiffs文件操作常见方法使用，包括文件查找、创建、打开、关闭、删除
+ */
+#include <FS.h>
+
+//以下三个定义为调试定义
+#define DebugBegin(baud_rate)    Serial.begin(baud_rate)
+#define DebugPrintln(message)    Serial.println(message)
+#define DebugPrint(message)    Serial.print(message)
+
+#define myFileName  "mydemo.txt"
+
+void setup(){
+  DebugBegin(9600);
+  DebugPrintln("Check Start SPIFFS...");
+  //启动SPIFFS，如果下载配置没有配置SPIFFS，返回false
+  if(!SPIFFS.begin()){
+     DebugPrintln("Start SPIFFS Failed!please check Arduino Download Config.");
+     return;
+  }
+  DebugPrintln("Start SPIFFS Done.");
+  //判断文件是否存在
+  if(SPIFFS.exists(myFileName)){
+    DebugPrintln("mydemo.txt exists.");
+  }else{
+    DebugPrintln("mydemo.txt not exists.");
+  }
+  
+  File myFile;
+  //打开文件 不存在就创建一个 可读可写
+  myFile = SPIFFS.open(myFileName,"w+");
+  //关闭文件
+  myFile.close();
+  //再次判断文件是否存在
+  if(SPIFFS.exists(myFileName)){
+    DebugPrintln("mydemo.txt exists.");
+  }else{
+    DebugPrintln("mydemo.txt not exists.");
+  }
+  //删除文件
+  DebugPrintln("mydemo.txt removing...");
+  SPIFFS.remove(myFileName);
+  //再次判断文件是否存在
+  if(SPIFFS.exists(myFileName)){
+    DebugPrintln("mydemo.txt exists.");
+  }else{
+    DebugPrintln("mydemo.txt not exists.");
+  }
+}
+
+void loop(){
+}
